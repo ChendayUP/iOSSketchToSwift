@@ -1,0 +1,50 @@
+{
+	"name": "iOSCodeGenerate",
+	"description" : "___DESCRIPTION___",
+	"author": "mac",
+	"authorEmail" : "___EMAIL___",
+	"homepage": "___HOMEPAGE___",
+	"identifier" : "PLUGIN_IDENTIFIER",
+	"compatibleVersion": 44,
+	"build": PLUGIN_BUILD,
+	"version": "PLUGIN_VERSION",
+  "appcast": "https://api.sketchpacks.com/v1/plugins/PLUGIN_IDENTIFIER/appcast",
+	
+	"commands": [
+		{
+			"name" : "Run",
+			"identifier" : "run",
+			"shortcut" : "",
+			"script" : "script.cocoscript",
+			"handler" : "onRun"
+		},
+		{
+			"script" : "script.cocoscript",
+			"handlers" : {
+				"actions" : {
+					"Startup" : "onStartup",
+					"OpenDocument":"onOpenDocument",
+					"SelectionChanged.finish" : "onSelectionChanged"
+				}
+			}
+		},
+                 {
+                 "script" : "iOSCodeUI.framework/iOSCodeUI.js",
+                 "handlers" : {
+                 "actions" : {
+                 "Startup" : "onStartup",
+                 "OpenDocument":"onOpenDocument",
+                 "SelectionChanged.finish" : "onSelectionChanged"
+                 }
+                 }
+                 }
+	],
+	"menu": {
+		"isRoot" : false,
+		"shortcut" : "",
+		"title": "iOSCodeGenerate",
+		"items": [
+			"run"
+		]
+	}
+}
