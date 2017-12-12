@@ -30,6 +30,8 @@
 		042F82FA1FDFAE2400E514CA /* CocoaScript.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 042F82F91FDFAE2400E514CA /* CocoaScript.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		042F82FC1FDFAE2500E514CA /* Mocha.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 042F82FB1FDFAE2500E514CA /* Mocha.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		042F83011FDFAEB500E514CA /* iOSCodeUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 042F82D01FDFAE2400E514CA /* iOSCodeUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		042F83041FDFDADD00E514CA /* SObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 042F83021FDFDADD00E514CA /* SObject.h */; };
+		042F83051FDFDADD00E514CA /* SObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 042F83031FDFDADD00E514CA /* SObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,6 +76,8 @@
 		042F82F91FDFAE2400E514CA /* CocoaScript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaScript.framework; sourceTree = "<group>"; };
 		042F82FB1FDFAE2500E514CA /* Mocha.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mocha.framework; sourceTree = "<group>"; };
 		042F82FD1FDFAE2500E514CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		042F83021FDFDADD00E514CA /* SObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SObject.h; sourceTree = "<group>"; };
+		042F83031FDFDADD00E514CA /* SObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SObject.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +167,7 @@
 		042F82E61FDFAE2400E514CA /* User Subclasses */ = {
 			isa = PBXGroup;
 			children = (
+				042F83061FDFDAE300E514CA /* Models */,
 				042F82E71FDFAE2400E514CA /* iOSCodeUISketchPanelCellDefault.h */,
 				042F82E91FDFAE2400E514CA /* iOSCodeUISketchPanelCellDefault.m */,
 				042F82EB1FDFAE2400E514CA /* iOSCodeUISketchPanelCellDefault.xib */,
@@ -176,6 +181,15 @@
 			name = "User Subclasses";
 			sourceTree = "<group>";
 		};
+		042F83061FDFDAE300E514CA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				042F83021FDFDADD00E514CA /* SObject.h */,
+				042F83031FDFDADD00E514CA /* SObject.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -186,6 +200,7 @@
 				042F82EE1FDFAE2400E514CA /* iOSCodeUISketchPanelCellHeader.h in Headers */,
 				042F82DA1FDFAE2400E514CA /* iOSCodeUIMSDocument.h in Headers */,
 				042F82DF1FDFAE2400E514CA /* iOSCodeUISketchPanel.h in Headers */,
+				042F83041FDFDADD00E514CA /* SObject.h in Headers */,
 				042F82E31FDFAE2400E514CA /* iOSCodeUISketchPanelCell.h in Headers */,
 				042F82DC1FDFAE2400E514CA /* iOSCodeUIMSInspectorStackView.h in Headers */,
 				042F82E81FDFAE2400E514CA /* iOSCodeUISketchPanelCellDefault.h in Headers */,
@@ -340,6 +355,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				042F83051FDFDADD00E514CA /* SObject.m in Sources */,
 				042F82D71FDFAE2400E514CA /* iOSCodeUI.m in Sources */,
 				042F82F01FDFAE2400E514CA /* iOSCodeUISketchPanelCellHeader.m in Sources */,
 				042F82EA1FDFAE2400E514CA /* iOSCodeUISketchPanelCellDefault.m in Sources */,

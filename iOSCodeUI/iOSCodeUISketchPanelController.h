@@ -7,6 +7,7 @@
 //
 
 @import Cocoa;
+#import <Foundation/Foundation.h>
 #import "iOSCodeUIMSDocument.h"
 #import "iOSCodeUIMSInspectorStackView.h"
 #import "iOSCodeUISketchPanelDataSource.h"

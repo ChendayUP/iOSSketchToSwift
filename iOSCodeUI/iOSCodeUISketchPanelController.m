@@ -13,14 +13,13 @@
 #import "iOSCodeUISketchPanel.h"
 #import "iOSCodeUISketchPanelDataSource.h"
 
-
 @interface iOSCodeUISketchPanelController ()
 
 @property (nonatomic, strong) id <iOSCodeUIMSInspectorStackView> stackView; // MSInspectorStackView
 @property (nonatomic, strong) id <iOSCodeUIMSDocument> document;
 @property (nonatomic, strong) iOSCodeUISketchPanel *panel;
 @property (nonatomic, copy) NSArray *selection;
-
+@property (nonatomic, copy) NSDictionary<NSString*,NSString*> *colorDic;
 @end
 
 @implementation iOSCodeUISketchPanelController
@@ -36,10 +35,97 @@
 
 - (void)selectionDidChange:(NSArray *)selection {
     self.selection = [selection valueForKey:@"layers"];         // To get NSArray from MSLayersArray
-
+    [self CodeGenerate:self.selection];
     self.panel.stackView = [(NSObject *)_document valueForKeyPath:@"inspectorController.currentController.stackView"];
     [self.panel reloadData];
 }
+
+-(void)CodeGenerate:(NSArray *)layers {
+    NSString *lines = @"\n";
+    for (id layer in layers) {
+        NSString *name = [layer valueForKeyPath:@"nodeName"];
+        if ([name hasSuffix:@"Label"]) {
+            lines = [NSString stringWithFormat:@"%@%@", lines ,[self LabelCode:layer]];
+        } else if ([name hasSuffix:@"Image"]){
+            
+        }else if ([name hasSuffix:@"Button"]){
+            
+        } else {
+            NSLog(@"error name is %@",name);
+        }
+    }
+    
+    NSLog(@"%@", lines);
+    
+}
+
+-(NSString*)ImageCode:(id)layer {
+    NSString *classname = [layer className];
+    NSInteger width = [[layer valueForKeyPath:@"frame.width"] integerValue];
+    NSInteger height = [[layer valueForKeyPath:@"frame.height"] integerValue];
+    NSString *name = [layer valueForKeyPath:@"name"];
+    if ([classname isEqual:@"MSLayerGroup"]) {
+        NSString *code = [NSString stringWithFormat:@"    lazy var %@: UIImageView = {\n        let view = UIImageView(image: R.image.%@())\n        view.width(%ld).height(%ld)\n        return view\n    }()\n",name,name,(long)width,(long)height];
+        return code;
+    } else if ([classname isEqual:@"MSShapeGroup"]) {
+        id ovalShape = [[layer valueForKeyPath:@"layers"] firstObject];
+    
+        if ([[ovalShape className] isEqual:@"MSOvalShape"]) {
+            NSString *code = [NSString stringWithFormat:@"    lazy var %@: UserPhotoImageView = {\n        let view = UserPhotoImageView(frame: CGRect(x: 0, y: 0, width: %ld, height: %ld))\n        view.size(%ld)\n        return view\n    }()\n",name,(long)width,(long)height,(long)width];
+            return code;
+        }
+   
+    }
+    return @"";
+}
+
+-(NSString*)LabelCode:(id)layer {
+    NSString *name = [layer valueForKeyPath:@"nodeName"];
+    NSString *contentText = [layer valueForKeyPath:@"stringValue"];
+    NSString *fontSize = [layer valueForKeyPath:@"fontSize"];
+    NSString *color = [self colorString:[layer valueForKeyPath:@"textColor"]];
+    NSString *textAlignment = [self textAlignmentString:[layer valueForKeyPath:@"textAlignment"]];
+    NSString *isBold = [self boldString:[layer valueForKeyPath:@"fontPostscriptName"]];
+    NSString *code = [NSString stringWithFormat:@"    lazy var %@: UILabel = {\n        let view = UILabel.normalLabel(text: \"%@\", fontSize: %@, color: %@, textAlignment: %@, isBold: %@)\n        return view\n    }()\n",name,contentText,fontSize,color,textAlignment,isBold];
+    return code;
+}
+
+- (NSString*)colorString:(id)color {
+    NSString *hexColor = [self hexStringFromColor:color];
+    // 可以遍历处所有的颜色
+    NSString *string = self.colorDic[hexColor];
+    if (string == nil) {
+        return [NSString stringWithFormat: @"UIColor(hex: %@)", hexColor];
+    } else {
+        return string;
+    }
+}
+
+- (NSString*)textAlignmentString:(id)number {
+    NSInteger value = [number integerValue];
+    // 对齐属性对应的值 0 左对齐 2 居中 1 右对齐 3 两边对齐
+    if (value == 0) {
+        return @".left";
+    } else if (value == 2) {
+        return @".center";
+    } else if (value == 1) {
+        return @".right";
+    } else {
+        return @".left";
+    }
+}
+
+-(NSString*)boldString:(NSString*)fontName {
+    NSArray *array = [fontName componentsSeparatedByString:@"-"];
+    if (array.count == 2) {
+        if ([array[1] isEqual:@"Semibold"]) {
+            return @"true";
+        }
+    }
+    return @"false";
+}
+
+
 
 #pragma mark - iOSCodeUISketchPanelDataSource
 
@@ -54,7 +140,7 @@
 }
 
 - (NSUInteger)numberOfRowsForiOSCodeUISketchPanel:(iOSCodeUISketchPanel *)panel {
-    return self.selection.count;    // Using self.selection as number of rows in the panel
+    return 1;//self.selection.count;    // Using self.selection as number of rows in the panel
 }
 
 - (iOSCodeUISketchPanelCell *)iOSCodeUISketchPanel:(iOSCodeUISketchPanel *)panel itemForRowAtIndex:(NSUInteger)index {
@@ -64,12 +150,15 @@
         cell.reuseIdentifier = @"cell";
     }
 
-    id layer = self.selection[index];
+//    id layer = self.selection[index];
+//    NSString *name = [layer valueForKeyPath:@"nodeName"];
+//    NSString *objectID = [layer valueForKeyPath:@"objectID"];
+//    NSString *hexColor = [self hexStringFromColor:[layer valueForKeyPath:@"textColor"]];
+    
     //    cell.titleLabel.stringValue = [layer name];
     //    id mColor = [layer valueForKeyPath:@"textColor"];
-    NSString *hexColor = [self hexStringFromColor:[layer valueForKeyPath:@"textColor"]];
-    cell.titleLabel.stringValue = [NSString stringWithFormat:@"%@-%@",[layer valueForKeyPath:@"fontSize"],hexColor];
-    cell.imageView.image = [layer valueForKeyPath:@"previewImages.LayerListPreviewUnfocusedImage"];
+//    cell.titleLabel.stringValue = [NSString stringWithFormat:@"%@-%@",[layer valueForKeyPath:@"fontSize"],hexColor];
+//    cell.imageView.image = [layer valueForKeyPath:@"previewImages.LayerListPreviewUnfocusedImage"];
 
     return cell;
 }
@@ -85,6 +174,16 @@
             lroundf([g floatValue] * 255),
             lroundf([b floatValue] * 255),
             lroundf([a floatValue] * 255)];
+}
+
+- (NSDictionary*)colorDic {
+    if (!_colorDic) {
+        _colorDic = @{@"0x666666" : @"UIColor.wordLightBlack",
+                      @"0x333333": @"UIColor.wordBlack"
+                      };
+    }
+    return _colorDic;
+    
 }
 
 @end
