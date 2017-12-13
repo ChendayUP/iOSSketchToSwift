@@ -1,2 +1,2 @@
 # iOSSketchToSwift
-根据Sketch生产界面代码
+根据Sketch生成界面代码

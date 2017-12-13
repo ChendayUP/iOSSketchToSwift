@@ -13,23 +13,68 @@
 
 @end
 
-@implementation SObject
 
-- (instancetype)initWith:(id)layer
+
+@implementation SObject
+@synthesize code;
+
+- (instancetype)initWithLayer:(id)layer
 {
     self = [super init];
     if (self) {
-        self.name = [layer valueForKeyPath:@"nodeName"];
+        self.fullname = [layer valueForKeyPath:@"nodeName"];
+        [self operatName:self.fullname];
         self.classname = [layer className];
         self.text = [layer valueForKeyPath:@"stringValue"];
         self.textAlignment = [self textAlignmentString:[layer valueForKeyPath:@"textAlignment"]];
         self.fontSize = [[layer valueForKeyPath:@"fontSize"] integerValue];
-        self.color = [self colorString:[layer valueForKeyPath:@"textColor"]];
+      
         self.isBold = [self boldString:[layer valueForKeyPath:@"fontPostscriptName"]];
         self.width = [[layer valueForKeyPath:@"frame.width"] integerValue];
         self.height = [[layer valueForKeyPath:@"frame.height"] integerValue];
+        
+        self.color = [self colorString:[layer valueForKeyPath:@"textColor"]];
+        id style = [layer valueForKeyPath:@"style"];
+        if (style != nil) {
+            id border = [[style valueForKeyPath:@"borders"] firstObject];
+            id fill = [[style valueForKeyPath:@"fills"] firstObject];
+            self.borderWidth = [[border valueForKeyPath:@"thickness"] integerValue];
+            self.borderColor = [self colorString:[border valueForKeyPath:@"color"]];
+            self.backgroundColor = [self colorString:[fill valueForKeyPath:@"color"]];
+        }
+        self.code = @"";
     }
     return self;
+}
+
+- (void)operatName:(NSString*)name {
+    NSArray *names = [name componentsSeparatedByString:@"-"];
+    if (names.count == 2) {
+        self.Imagename = names[0];
+        self.name = names[1];
+    }
+}
+
+- (id)getTextLayer:(id)layer {
+    NSArray *subLayers = [layer valueForKeyPath:@"layers"];
+    for (id sub in subLayers) {
+        NSString *classname = [sub className];
+        if ([classname isEqual:@"MSLayerGroup"]) {
+            return [self getTextLayer:sub];
+        }
+        if ([classname isEqual:@"MSTextLayer"]) {
+            return sub;
+        }
+    }
+    return nil;
+}
+
+-(void)setTextwithLayer:(id)layer {
+    NSString *cname = [layer className];
+    if ([cname isEqual:@"MSTextLayer"]) {
+        SObject *label = [[SObject alloc]initWithLayer:layer];
+        self.text = label.text;
+    }
 }
 
 - (NSString*)textAlignmentString:(id)number {
@@ -89,5 +134,10 @@
     return _colorDic;
     
 }
+//
+//- (void)setText:(NSString *)text {
+//    _text = text;
+//    self.code = [self generateCode];
+//}
 
 @end

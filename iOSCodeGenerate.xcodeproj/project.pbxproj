@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		041D63A41FE0CDCB00F29C97 /* SImageObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 041D63A21FE0CDCB00F29C97 /* SImageObject.h */; };
+		041D63A51FE0CDCB00F29C97 /* SImageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 041D63A31FE0CDCB00F29C97 /* SImageObject.m */; };
+		041D63A81FE0CFC100F29C97 /* SUserPhotoObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 041D63A61FE0CFC100F29C97 /* SUserPhotoObject.h */; };
+		041D63A91FE0CFC100F29C97 /* SUserPhotoObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 041D63A71FE0CFC100F29C97 /* SUserPhotoObject.m */; };
+		041D63AC1FE0D08600F29C97 /* SLabelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 041D63AA1FE0D08600F29C97 /* SLabelObject.h */; };
+		041D63AD1FE0D08600F29C97 /* SLabelObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 041D63AB1FE0D08600F29C97 /* SLabelObject.m */; };
+		041D63B01FE0D57B00F29C97 /* SButtonObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 041D63AE1FE0D57B00F29C97 /* SButtonObject.h */; };
+		041D63B11FE0D57B00F29C97 /* SButtonObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 041D63AF1FE0D57B00F29C97 /* SButtonObject.m */; };
+		041D63B41FE0FCC700F29C97 /* STextFieldObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 041D63B21FE0FCC700F29C97 /* STextFieldObject.h */; };
+		041D63B51FE0FCC700F29C97 /* STextFieldObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 041D63B31FE0FCC700F29C97 /* STextFieldObject.m */; };
 		04217EB21FDE80C800A5724C /* manifest.json in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04217EB11FDE80C800A5724C /* manifest.json */; };
 		04217EB41FDE80C800A5724C /* script.cocoscript in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04217EB31FDE80C800A5724C /* script.cocoscript */; };
 		042F82D31FDFAE2400E514CA /* iOSCodeUI.h in Resources */ = {isa = PBXBuildFile; fileRef = 042F82D21FDFAE2400E514CA /* iOSCodeUI.h */; };
@@ -50,6 +60,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		041D63A21FE0CDCB00F29C97 /* SImageObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SImageObject.h; sourceTree = "<group>"; };
+		041D63A31FE0CDCB00F29C97 /* SImageObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SImageObject.m; sourceTree = "<group>"; };
+		041D63A61FE0CFC100F29C97 /* SUserPhotoObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SUserPhotoObject.h; sourceTree = "<group>"; };
+		041D63A71FE0CFC100F29C97 /* SUserPhotoObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SUserPhotoObject.m; sourceTree = "<group>"; };
+		041D63AA1FE0D08600F29C97 /* SLabelObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLabelObject.h; sourceTree = "<group>"; };
+		041D63AB1FE0D08600F29C97 /* SLabelObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLabelObject.m; sourceTree = "<group>"; };
+		041D63AE1FE0D57B00F29C97 /* SButtonObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SButtonObject.h; sourceTree = "<group>"; };
+		041D63AF1FE0D57B00F29C97 /* SButtonObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SButtonObject.m; sourceTree = "<group>"; };
+		041D63B21FE0FCC700F29C97 /* STextFieldObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = STextFieldObject.h; sourceTree = "<group>"; };
+		041D63B31FE0FCC700F29C97 /* STextFieldObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = STextFieldObject.m; sourceTree = "<group>"; };
 		04217EAE1FDE80C800A5724C /* iOSCodeGenerate.sketchplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSCodeGenerate.sketchplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		04217EB11FDE80C800A5724C /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
 		04217EB31FDE80C800A5724C /* script.cocoscript */ = {isa = PBXFileReference; lastKnownFileType = text; path = script.cocoscript; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.javascript; };
@@ -186,6 +206,16 @@
 			children = (
 				042F83021FDFDADD00E514CA /* SObject.h */,
 				042F83031FDFDADD00E514CA /* SObject.m */,
+				041D63A21FE0CDCB00F29C97 /* SImageObject.h */,
+				041D63A31FE0CDCB00F29C97 /* SImageObject.m */,
+				041D63A61FE0CFC100F29C97 /* SUserPhotoObject.h */,
+				041D63A71FE0CFC100F29C97 /* SUserPhotoObject.m */,
+				041D63AA1FE0D08600F29C97 /* SLabelObject.h */,
+				041D63AB1FE0D08600F29C97 /* SLabelObject.m */,
+				041D63AE1FE0D57B00F29C97 /* SButtonObject.h */,
+				041D63AF1FE0D57B00F29C97 /* SButtonObject.m */,
+				041D63B21FE0FCC700F29C97 /* STextFieldObject.h */,
+				041D63B31FE0FCC700F29C97 /* STextFieldObject.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -197,11 +227,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				041D63A81FE0CFC100F29C97 /* SUserPhotoObject.h in Headers */,
 				042F82EE1FDFAE2400E514CA /* iOSCodeUISketchPanelCellHeader.h in Headers */,
+				041D63B01FE0D57B00F29C97 /* SButtonObject.h in Headers */,
+				041D63B41FE0FCC700F29C97 /* STextFieldObject.h in Headers */,
+				041D63AC1FE0D08600F29C97 /* SLabelObject.h in Headers */,
 				042F82DA1FDFAE2400E514CA /* iOSCodeUIMSDocument.h in Headers */,
 				042F82DF1FDFAE2400E514CA /* iOSCodeUISketchPanel.h in Headers */,
 				042F83041FDFDADD00E514CA /* SObject.h in Headers */,
 				042F82E31FDFAE2400E514CA /* iOSCodeUISketchPanelCell.h in Headers */,
+				041D63A41FE0CDCB00F29C97 /* SImageObject.h in Headers */,
 				042F82DC1FDFAE2400E514CA /* iOSCodeUIMSInspectorStackView.h in Headers */,
 				042F82E81FDFAE2400E514CA /* iOSCodeUISketchPanelCellDefault.h in Headers */,
 				042F82F81FDFAE2400E514CA /* iOSCodeUISketchPanelDataSource.h in Headers */,
@@ -356,12 +391,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				042F83051FDFDADD00E514CA /* SObject.m in Sources */,
+				041D63AD1FE0D08600F29C97 /* SLabelObject.m in Sources */,
 				042F82D71FDFAE2400E514CA /* iOSCodeUI.m in Sources */,
 				042F82F01FDFAE2400E514CA /* iOSCodeUISketchPanelCellHeader.m in Sources */,
+				041D63B51FE0FCC700F29C97 /* STextFieldObject.m in Sources */,
 				042F82EA1FDFAE2400E514CA /* iOSCodeUISketchPanelCellDefault.m in Sources */,
 				042F82E11FDFAE2400E514CA /* iOSCodeUISketchPanel.m in Sources */,
 				042F82F61FDFAE2400E514CA /* iOSCodeUISketchPanelController.m in Sources */,
+				041D63B11FE0D57B00F29C97 /* SButtonObject.m in Sources */,
+				041D63A51FE0CDCB00F29C97 /* SImageObject.m in Sources */,
 				042F82E51FDFAE2400E514CA /* iOSCodeUISketchPanelCell.m in Sources */,
+				041D63A91FE0CFC100F29C97 /* SUserPhotoObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

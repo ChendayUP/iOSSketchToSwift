@@ -10,6 +10,8 @@
 
 @interface SObject : NSObject
 
+@property (nonatomic, copy) NSString *fullname;
+@property (nonatomic, copy) NSString *Imagename;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic, copy) NSString *textAlignment;
@@ -29,4 +31,8 @@
 @property (nonatomic, copy) NSString *borderColor;
 @property (nonatomic, assign) NSInteger borderWidth;
 
+- (instancetype)initWithLayer:(id)layer;
+- (void)setTextwithLayer:(id)layer;
+- (id)getTextLayer:(id)layer;
+//- (NSString*)generateCode;
 @end

@@ -12,6 +12,20 @@
 #import "iOSCodeUISketchPanelCellDefault.h"
 #import "iOSCodeUISketchPanel.h"
 #import "iOSCodeUISketchPanelDataSource.h"
+#import "SObject.h"
+#import "SImageObject.h"
+#import "SUserPhotoObject.h"
+#import "SLabelObject.h"
+#import "SButtonObject.h"
+#import "STextFieldObject.h"
+
+#define SuppressPerformSelectorLeakWarning(Stuff) \
+do { \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"") \
+Stuff; \
+_Pragma("clang diagnostic pop") \
+} while (0);
 
 @interface iOSCodeUISketchPanelController ()
 
@@ -19,7 +33,7 @@
 @property (nonatomic, strong) id <iOSCodeUIMSDocument> document;
 @property (nonatomic, strong) iOSCodeUISketchPanel *panel;
 @property (nonatomic, copy) NSArray *selection;
-@property (nonatomic, copy) NSDictionary<NSString*,NSString*> *colorDic;
+//@property (nonatomic, copy) NSDictionary<NSString*,NSString*> *colorDic;
 @end
 
 @implementation iOSCodeUISketchPanelController
@@ -41,89 +55,146 @@
 }
 
 -(void)CodeGenerate:(NSArray *)layers {
-    NSString *lines = @"\n";
+    NSMutableArray<SObject*> *objects = [[NSMutableArray alloc]init];
     for (id layer in layers) {
-        NSString *name = [layer valueForKeyPath:@"nodeName"];
-        if ([name hasSuffix:@"Label"]) {
-            lines = [NSString stringWithFormat:@"%@%@", lines ,[self LabelCode:layer]];
+        SObject *model;
+        NSString *text;
+        id copyLayer = layer;
+        NSString *classname = [copyLayer className];
+        if ([classname isEqual:@"MSSymbolInstance"]) {
+            text = [self symbolOverriderText:copyLayer];
+            copyLayer = [layer valueForKeyPath:@"symbolMaster"];
+        }
+        NSString *name = [copyLayer valueForKeyPath:@"nodeName"];
+        if ([classname isEqual:@"MSTextLayer"]) {
+            model = [self LabelCode:copyLayer];
         } else if ([name hasSuffix:@"Image"]){
-            
+            model = [self ImageCode:copyLayer];
         }else if ([name hasSuffix:@"Button"]){
-            
+            model = [self ButtonCode:copyLayer];
+        } else if ([name hasSuffix:@"TextField"]){
+            model = [self TextField:copyLayer];
         } else {
-            NSLog(@"error name is %@",name);
+            NSLog(@"无法识别的控件: %@",name);
+        }
+        
+        if (model != nil) {
+            if (text != nil) model.text = text;
+            [objects addObject:model];
         }
     }
     
+    NSString *lines = @"\n";
+    for (SObject *model in objects) {
+        NSString *code = model.code;
+        if (code.length > 0) {
+            lines = [NSString stringWithFormat:@"%@%@", lines ,code];
+        }
+    }
     NSLog(@"%@", lines);
+    NSLog(@"%@", @"完成");
     
 }
 
--(NSString*)ImageCode:(id)layer {
+-(NSString*)symbolOverriderText:(id)layer {
+    id tdocument = self.document;
+    id documentData = [tdocument valueForKeyPath:@"documentData"];
+    NSDictionary *overs = [layer valueForKeyPath:@"overrides"];
+    for (NSString *obID in overs.allKeys) {
+        id sublayer;
+        do {
+            _Pragma("clang diagnostic push")
+            _Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"")
+            SEL method = NSSelectorFromString(@"layerWithID:");
+            sublayer = [documentData performSelector:method withObject:obID];
+            _Pragma("clang diagnostic pop")
+        } while (0);
+//        SuppressPerformSelectorLeakWarning(
+//           SEL method = NSSelectorFromString(@"layerWithID");
+//           sublayer = [documentData performSelector:method withObject:obID];
+//        );
+        if ([[sublayer className] isEqual:@"MSTextLayer"]) {
+            return overs[obID];
+        }
+    }
+    return nil;
+}
+
+-(SObject*)TextField:(id)layer {
     NSString *classname = [layer className];
-    NSInteger width = [[layer valueForKeyPath:@"frame.width"] integerValue];
-    NSInteger height = [[layer valueForKeyPath:@"frame.height"] integerValue];
-    NSString *name = [layer valueForKeyPath:@"name"];
+    if ([classname isEqual:@"MSLayerGroup"] || [classname isEqual:@"MSSymbolMaster"]) {
+        STextFieldObject *model = [[STextFieldObject alloc] initWithLayer:layer];
+        return model;
+    }
+    return nil;
+}
+
+- (SButtonObject*)ButtonCode:(id)layer {
+    NSString *classname = [layer className];
     if ([classname isEqual:@"MSLayerGroup"]) {
-        NSString *code = [NSString stringWithFormat:@"    lazy var %@: UIImageView = {\n        let view = UIImageView(image: R.image.%@())\n        view.width(%ld).height(%ld)\n        return view\n    }()\n",name,name,(long)width,(long)height];
-        return code;
+        SButtonObject *model = [[SButtonObject alloc] initWithLayer:layer];
+        return model;
+    }
+    return nil;
+}
+
+-(SObject*)ImageCode:(id)layer {
+    NSString *classname = [layer className];
+    if ([classname isEqual:@"MSLayerGroup"]) {
+        SImageObject *model = [[SImageObject alloc] initWithLayer:layer];
+        return model;
     } else if ([classname isEqual:@"MSShapeGroup"]) {
         id ovalShape = [[layer valueForKeyPath:@"layers"] firstObject];
-    
+
         if ([[ovalShape className] isEqual:@"MSOvalShape"]) {
-            NSString *code = [NSString stringWithFormat:@"    lazy var %@: UserPhotoImageView = {\n        let view = UserPhotoImageView(frame: CGRect(x: 0, y: 0, width: %ld, height: %ld))\n        view.size(%ld)\n        return view\n    }()\n",name,(long)width,(long)height,(long)width];
-            return code;
-        }
-   
-    }
-    return @"";
-}
-
--(NSString*)LabelCode:(id)layer {
-    NSString *name = [layer valueForKeyPath:@"nodeName"];
-    NSString *contentText = [layer valueForKeyPath:@"stringValue"];
-    NSString *fontSize = [layer valueForKeyPath:@"fontSize"];
-    NSString *color = [self colorString:[layer valueForKeyPath:@"textColor"]];
-    NSString *textAlignment = [self textAlignmentString:[layer valueForKeyPath:@"textAlignment"]];
-    NSString *isBold = [self boldString:[layer valueForKeyPath:@"fontPostscriptName"]];
-    NSString *code = [NSString stringWithFormat:@"    lazy var %@: UILabel = {\n        let view = UILabel.normalLabel(text: \"%@\", fontSize: %@, color: %@, textAlignment: %@, isBold: %@)\n        return view\n    }()\n",name,contentText,fontSize,color,textAlignment,isBold];
-    return code;
-}
-
-- (NSString*)colorString:(id)color {
-    NSString *hexColor = [self hexStringFromColor:color];
-    // 可以遍历处所有的颜色
-    NSString *string = self.colorDic[hexColor];
-    if (string == nil) {
-        return [NSString stringWithFormat: @"UIColor(hex: %@)", hexColor];
-    } else {
-        return string;
-    }
-}
-
-- (NSString*)textAlignmentString:(id)number {
-    NSInteger value = [number integerValue];
-    // 对齐属性对应的值 0 左对齐 2 居中 1 右对齐 3 两边对齐
-    if (value == 0) {
-        return @".left";
-    } else if (value == 2) {
-        return @".center";
-    } else if (value == 1) {
-        return @".right";
-    } else {
-        return @".left";
-    }
-}
-
--(NSString*)boldString:(NSString*)fontName {
-    NSArray *array = [fontName componentsSeparatedByString:@"-"];
-    if (array.count == 2) {
-        if ([array[1] isEqual:@"Semibold"]) {
-            return @"true";
+            SUserPhotoObject *model = [[SUserPhotoObject alloc] initWithLayer:layer];
+            return model;
+        } else {
+            SImageObject *model = [[SImageObject alloc] initWithLayer:layer];
+            return model;
         }
     }
-    return @"false";
+    return nil;
 }
+
+-(SObject*)LabelCode:(id)layer {
+    return [[SLabelObject alloc]initWithLayer:layer];
+}
+
+//- (NSString*)colorString:(id)color {
+//    NSString *hexColor = [self hexStringFromColor:color];
+//    // 可以遍历处所有的颜色
+//    NSString *string = self.colorDic[hexColor];
+//    if (string == nil) {
+//        return [NSString stringWithFormat: @"UIColor(hex: %@)", hexColor];
+//    } else {
+//        return string;
+//    }
+//}
+//
+//- (NSString*)textAlignmentString:(id)number {
+//    NSInteger value = [number integerValue];
+//    // 对齐属性对应的值 0 左对齐 2 居中 1 右对齐 3 两边对齐
+//    if (value == 0) {
+//        return @".left";
+//    } else if (value == 2) {
+//        return @".center";
+//    } else if (value == 1) {
+//        return @".right";
+//    } else {
+//        return @".left";
+//    }
+//}
+//
+//-(NSString*)boldString:(NSString*)fontName {
+//    NSArray *array = [fontName componentsSeparatedByString:@"-"];
+//    if (array.count == 2) {
+//        if ([array[1] isEqual:@"Semibold"]) {
+//            return @"true";
+//        }
+//    }
+//    return @"false";
+//}
 
 
 
@@ -163,27 +234,27 @@
     return cell;
 }
 
-- (NSString *)hexStringFromColor:(id)color {
-    
-    NSNumber *r = [color valueForKeyPath:@"red"];
-    NSNumber *g = [color valueForKeyPath:@"green"];
-    NSNumber *b = [color valueForKeyPath:@"blue"];
-    NSNumber *a = [color valueForKeyPath:@"alpha"];
-    return [NSString stringWithFormat:@"0x%02lX%02lX%02lX%02lX",
-            lroundf([r floatValue]  * 255),
-            lroundf([g floatValue] * 255),
-            lroundf([b floatValue] * 255),
-            lroundf([a floatValue] * 255)];
-}
-
-- (NSDictionary*)colorDic {
-    if (!_colorDic) {
-        _colorDic = @{@"0x666666" : @"UIColor.wordLightBlack",
-                      @"0x333333": @"UIColor.wordBlack"
-                      };
-    }
-    return _colorDic;
-    
-}
+//- (NSString *)hexStringFromColor:(id)color {
+//
+//    NSNumber *r = [color valueForKeyPath:@"red"];
+//    NSNumber *g = [color valueForKeyPath:@"green"];
+//    NSNumber *b = [color valueForKeyPath:@"blue"];
+//    NSNumber *a = [color valueForKeyPath:@"alpha"];
+//    return [NSString stringWithFormat:@"0x%02lX%02lX%02lX%02lX",
+//            lroundf([r floatValue]  * 255),
+//            lroundf([g floatValue] * 255),
+//            lroundf([b floatValue] * 255),
+//            lroundf([a floatValue] * 255)];
+//}
+//
+//- (NSDictionary*)colorDic {
+//    if (!_colorDic) {
+//        _colorDic = @{@"0x666666" : @"UIColor.wordLightBlack",
+//                      @"0x333333": @"UIColor.wordBlack"
+//                      };
+//    }
+//    return _colorDic;
+//
+//}
 
 @end
