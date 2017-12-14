@@ -20,10 +20,14 @@
 }
 -(NSString*)code {
     // 按钮应该是根据项目,把所有的按钮样式先罗列出来,封装好直接调用,然后根据名称直接生成
+    NSString *acode = @"";
     if ([self.name hasSuffix:@"cTextField"]) {
         return [NSString stringWithFormat:@"    lazy var %@: profileTextField = {\n        let view = profileTextField.instance(dx: 20)\n        view.placeholder = \"%@\"\n        view.height(%ld)\n        return view\n    }()\n",self.name, self.text, (long)self.height];
+    } else {
+         acode = [NSString stringWithFormat:@"    lazy var %@: UITextField = {\n        let view = profileTextField.instance(dx: 20)\n        view.placeholder = \"%@\"\n        view.height(%ld)\n ",self.name, self.text, (long)self.height];
     }
-    return @"";
+    acode = [NSString stringWithFormat:@"%@%@",acode,[self baseCode]];
+    return acode;
 }
 
 

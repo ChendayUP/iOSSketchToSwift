@@ -84,16 +84,65 @@ _Pragma("clang diagnostic pop") \
         }
     }
     
-    NSString *lines = @"\n";
+    NSString *lines = @"";
     for (SObject *model in objects) {
         NSString *code = model.code;
         if (code.length > 0) {
-            lines = [NSString stringWithFormat:@"%@%@", lines ,code];
+            lines = [NSString stringWithFormat:@"%@\n%@", lines ,code];
         }
     }
+    
+    lines = [self ViewControllerInitCode:objects varString:lines];
+    
     NSLog(@"%@", lines);
     NSLog(@"%@", @"完成");
     
+}
+
+-(NSString*)ViewControllerInitCode:(NSArray<SObject*>*)objects varString:(NSString*)vars {
+    NSString *lines = @"";
+    for (SObject *model in objects) {
+        NSString *code = model.name;
+        if (code.length > 0) {
+            lines = [NSString stringWithFormat:@"%@            %@,\n", lines ,code];
+        }
+    }
+    lines = [lines substringToIndex:lines.length - 2];
+    lines = [NSString stringWithFormat:@"%@\n", lines];
+    
+    NSString *initCode1 =@""
+    @"import UIKit\n"
+    @"import SnapKit\n"
+    @"class <#ViewController#>: BaseViewController {\n"
+    @"\n"
+    @"    let aView = ScrollContentView()\n"
+    @"    override func loadView() { view = aView }\n"
+    @"\n"
+    @"    override func viewDidLoad() {\n"
+    @"        super.viewDidLoad()\n"
+    @"        title = <#title#>\n"
+    @"        SetupUI()\n"
+    @"    }\n"
+    @"\n"
+    @"    func SetupUI() {\n"
+    @"\n"
+    @"        aView.contentView.sv(\n";
+    
+    NSString *initCode2 =@""
+    @"        )\n"
+    @"\n"
+    @"        aView.layout(\n"
+    @"\n"
+    @"        )\n"
+    @"    }\n";
+    
+    NSString *initCode3 =@"}\n";
+    
+    return [NSString stringWithFormat:@"%@%@%@%@%@",initCode1,lines,initCode2,vars,initCode3];
+}
+
+-(NSString*)TableViewCellInitCode {
+    return @"";
 }
 
 -(NSString*)symbolOverriderText:(id)layer {

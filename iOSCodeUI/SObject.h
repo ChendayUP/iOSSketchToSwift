@@ -29,10 +29,12 @@
 //@property (nonatomic, assign) NSInteger ;
 
 @property (nonatomic, copy) NSString *borderColor;
-@property (nonatomic, assign) NSInteger borderWidth;
+@property (nonatomic, assign) float borderWidth;
+@property (nonatomic, assign) float radius;
 
 - (instancetype)initWithLayer:(id)layer;
 - (void)setTextwithLayer:(id)layer;
 - (id)getTextLayer:(id)layer;
+- (NSString*)baseCode;
 //- (NSString*)generateCode;
 @end

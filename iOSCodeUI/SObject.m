@@ -17,6 +17,7 @@
 
 @implementation SObject
 @synthesize code;
+@synthesize borderWidth;
 
 - (instancetype)initWithLayer:(id)layer
 {
@@ -34,17 +35,33 @@
         self.height = [[layer valueForKeyPath:@"frame.height"] integerValue];
         
         self.color = [self colorString:[layer valueForKeyPath:@"textColor"]];
-        id style = [layer valueForKeyPath:@"style"];
+        id style = [self getStyle:layer];
         if (style != nil) {
             id border = [[style valueForKeyPath:@"borders"] firstObject];
             id fill = [[style valueForKeyPath:@"fills"] firstObject];
-            self.borderWidth = [[border valueForKeyPath:@"thickness"] integerValue];
+            [self setupBorderWidth:[[border valueForKeyPath:@"thickness"] floatValue]];
             self.borderColor = [self colorString:[border valueForKeyPath:@"color"]];
             self.backgroundColor = [self colorString:[fill valueForKeyPath:@"color"]];
         }
+    
+        id shapeLayer = [self getCorRadiusStyleLayer:layer];
+        [self setupRadius:[[shapeLayer valueForKey:@"fixedRadius"] floatValue]];
+        
         self.code = @"";
     }
     return self;
+}
+
+-(NSString*)baseCode {
+    NSString *acode = @"";
+    if (self.borderWidth > 0 || self.radius > 0) {
+        acode = [NSString stringWithFormat:@"%@        view.layer.masksToBounds = true\n        view.layer.cornerRadius = %.0f\n        view.layer.borderColor = %@\n        view.layer.borderWidth = %.0f\n",acode,self.radius,self.borderColor, self.borderWidth];
+    }
+    if (self.backgroundColor.length > 0) {
+        acode = [NSString stringWithFormat:@"%@        view.backgroundColor = %@\n",acode,self.backgroundColor];
+    }
+    acode = [NSString stringWithFormat:@"%@        return view\n    }()\n",acode];
+    return acode;
 }
 
 - (void)operatName:(NSString*)name {
@@ -52,7 +69,62 @@
     if (names.count == 2) {
         self.Imagename = names[0];
         self.name = names[1];
+    } else { // Label
+        self.Imagename = name;
+        self.name = name;
     }
+}
+
+-(void)setupRadius:(float)number {
+    if (number > (self.height*0.5)) {
+        self.radius = self.height *0.5;
+    }else {
+        self.radius = number;
+    }
+}
+
+-(void)setupBorderWidth:(float)number {
+    self.borderWidth = number < 1.0 ? 1.0 : number;
+}
+
+-(id)getStyle:(id)layer {
+    id style = [layer valueForKeyPath:@"style"];
+    id border = [[style valueForKeyPath:@"borders"] firstObject];
+    if (border == nil) {
+        style = [self getShapeGroupStyleLayer:layer];
+    }
+    return style;
+}
+
+// ShapeGroup保存了borders, fill属性
+-(id)getShapeGroupStyleLayer:(id)layer {
+    NSArray *subLayers = [layer valueForKeyPath:@"layers"];
+    for (id sub in subLayers) {
+        NSString *classname = [sub className];
+        if ([classname isEqual:@"MSShapeGroup"]) {
+            return [sub valueForKey:@"style"];
+        } else if ([classname isEqual:@"MSLayerGroup"]) {
+            return [self getShapeGroupStyleLayer:sub];
+        }
+    }
+    return nil;
+}
+
+// 获取radius
+-(id)getCorRadiusStyleLayer:(id)layer {
+    NSArray *subLayers = [layer valueForKeyPath:@"layers"];
+    for (id sub in subLayers) {
+        NSString *classname = [sub className];
+        if ([classname isEqual:@"MSShapeGroup"]) {
+            return [self getCorRadiusStyleLayer:sub];
+        }else if ([classname isEqual:@"MSLayerGroup"]) {
+            return [self getCorRadiusStyleLayer:sub];
+        }
+        if ([classname isEqual:@"MSRectangleShape"]) {
+            return sub;
+        }
+    }
+    return nil;
 }
 
 - (id)getTextLayer:(id)layer {
@@ -93,12 +165,17 @@
 
 - (NSString*)colorString:(id)color {
     NSString *hexColor = [self hexStringFromColor:color];
-    // 可以遍历处所有的颜色
-    NSString *string = self.colorDic[hexColor];
-    if (string == nil) {
-        return [NSString stringWithFormat: @"UIColor(hex: %@)", hexColor];
+    float a = [[color valueForKeyPath:@"alpha"] floatValue];
+    if (a == 1.0) {
+        // 可以遍历处所有的颜色
+        NSString *string = self.colorDic[hexColor];
+        if (string == nil) {
+            return [NSString stringWithFormat: @"UIColor(hex: %@)", hexColor];
+        } else {
+            return string;
+        }
     } else {
-        return string;
+        return [NSString stringWithFormat: @"UIColor(hex: %@, alpha: %.2f)", hexColor, a];
     }
 }
 
@@ -107,12 +184,11 @@
     NSNumber *r = [color valueForKeyPath:@"red"];
     NSNumber *g = [color valueForKeyPath:@"green"];
     NSNumber *b = [color valueForKeyPath:@"blue"];
-    NSNumber *a = [color valueForKeyPath:@"alpha"];
-    return [NSString stringWithFormat:@"0x%02lX%02lX%02lX%02lX",
+ 
+    return [NSString stringWithFormat:@"0x%02lX%02lX%02lX",
             lroundf([r floatValue]  * 255),
             lroundf([g floatValue] * 255),
-            lroundf([b floatValue] * 255),
-            lroundf([a floatValue] * 255)];
+            lroundf([b floatValue] * 255)];
 }
 
 -(NSString*)boldString:(NSString*)fontName {
@@ -134,6 +210,7 @@
     return _colorDic;
     
 }
+
 //
 //- (void)setText:(NSString *)text {
 //    _text = text;
