@@ -38,6 +38,10 @@ var onStartup = function(context) {
   })();
 };
 
+var VCCodeGenerate = function(content) {
+    
+}
+
 var onSelectionChanged = function(context) {
   iOSCodeUI.onSelectionChanged(context);
 };
