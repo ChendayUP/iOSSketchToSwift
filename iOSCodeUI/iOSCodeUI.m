@@ -24,14 +24,14 @@
 @property (nonatomic, copy) NSString *panelControllerClassName;
 
 + (instancetype)onSelectionChanged:(id)context;
-+ (instancetype)onVCCodeGenerated:(id)context;
++ (instancetype)onViewCodeGenerated:(id)context;
++ (instancetype)onTableViewCellCodeGenerated:(id)context;
 - (void)onSelectionChange:(NSArray *)selection;
-- (void)VCCodeGenerated:(NSArray *)selection;
+- (void)onViewCodeGenerated:(NSArray *)selection;
+- (void)onTableViewCellCodeGenerated:(NSArray *)selection;
 + (void)setSharedCommand:(id)command;
 
 @end
-
-
 
 @implementation iOSCodeUI
 
@@ -45,10 +45,10 @@ static id _command;
     return _command;
 }
 
-+ (instancetype)onVCCodeGenerated:(id)context {
++ (instancetype)onViewCodeGenerated:(id)context {
     //    COScript *coscript = [COScript currentCOScript];
     
-    id <iOSCodeUIMSDocument> document = [context valueForKeyPath:@"actionContext.document"];
+    id <iOSCodeUIMSDocument> document = [context valueForKeyPath:@"document"];
     if ( ! [document isKindOfClass:NSClassFromString(@"MSDocument")]) {
         document = nil;  // be safe
         return nil;
@@ -67,9 +67,37 @@ static id _command;
         [[Mocha sharedRuntime] setValue:instance forKey:key];
     }
     
-    NSArray *selection = [context valueForKeyPath:@"actionContext.document.selectedLayers"];
+    NSArray *selection = [context valueForKeyPath:@"document.selectedLayers"];
     //    NSLog(@"selection %p %@ %@", instance, key, selection);
-    [instance onSelectionChange:selection];
+    [instance onViewCodeGenerated:selection];
+    return instance;
+}
+
++ (instancetype)onTableViewCellCodeGenerated:(id)context {
+    //    COScript *coscript = [COScript currentCOScript];
+    
+    id <iOSCodeUIMSDocument> document = [context valueForKeyPath:@"document"];
+    if ( ! [document isKindOfClass:NSClassFromString(@"MSDocument")]) {
+        document = nil;  // be safe
+        return nil;
+    }
+    
+    if ( ! [self sharedCommand]) {
+        [self setSharedCommand:[context valueForKeyPath:@"command"]]; // MSPluginCommand
+    }
+    
+    NSString *key = [NSString stringWithFormat:@"%@-iOSCodeUI", [document description]];
+    __block iOSCodeUI *instance = [[Mocha sharedRuntime] valueForKey:key];
+    
+    if ( ! instance) {
+        //        [coscript setShouldKeepAround:YES];
+        instance = [[self alloc] initWithDocument:document];
+        [[Mocha sharedRuntime] setValue:instance forKey:key];
+    }
+    
+    NSArray *selection = [context valueForKeyPath:@"document.selectedLayers"];
+    //    NSLog(@"selection %p %@ %@", instance, key, selection);
+    [instance onTableViewCellCodeGenerated:selection];
     return instance;
 }
 
@@ -110,8 +138,12 @@ static id _command;
     return self;
 }
 
-- (void)VCCodeGenerated:(NSArray *)selection {
-    
+- (void)onViewCodeGenerated:(NSArray *)selection {
+    [_panelController viewCodeGenerate:selection];
+}
+
+- (void)onTableViewCellCodeGenerated:(NSArray *)selection {
+    [_panelController tableViewCellCodeGenerate:selection];
 }
 
 - (void)onSelectionChange:(NSArray *)selection {

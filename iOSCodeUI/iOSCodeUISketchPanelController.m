@@ -49,12 +49,26 @@ _Pragma("clang diagnostic pop") \
 
 - (void)selectionDidChange:(NSArray *)selection {
     self.selection = [selection valueForKey:@"layers"];         // To get NSArray from MSLayersArray
-    [self CodeGenerate:self.selection];
+    [self CodeGenerate:self.selection Type:1];
     self.panel.stackView = [(NSObject *)_document valueForKeyPath:@"inspectorController.currentController.stackView"];
     [self.panel reloadData];
 }
 
--(void)CodeGenerate:(NSArray *)layers {
+- (void)viewCodeGenerate:(NSArray *)selection {
+    self.selection = [selection valueForKey:@"layers"];         // To get NSArray from MSLayersArray
+    [self CodeGenerate:self.selection Type: 2];
+    self.panel.stackView = [(NSObject *)_document valueForKeyPath:@"inspectorController.currentController.stackView"];
+    [self.panel reloadData];
+}
+
+- (void)tableViewCellCodeGenerate:(NSArray *)selection {
+    self.selection = [selection valueForKey:@"layers"];         // To get NSArray from MSLayersArray
+    [self CodeGenerate:self.selection Type: 3];
+    self.panel.stackView = [(NSObject *)_document valueForKeyPath:@"inspectorController.currentController.stackView"];
+    [self.panel reloadData];
+}
+
+-(void)CodeGenerate:(NSArray *)layers Type: (NSInteger)typeInt {
     NSMutableArray<SObject*> *objects = [[NSMutableArray alloc]init];
     for (id layer in layers) {
         SObject *model;
@@ -91,8 +105,23 @@ _Pragma("clang diagnostic pop") \
             lines = [NSString stringWithFormat:@"%@\n%@", lines ,code];
         }
     }
+    switch (typeInt) {
+        case 1: // vc
+            lines = [self ViewControllerInitCode:objects varString:lines];
+            break;
+        case 2: // view
+            lines = [self ViewInitCode:objects varString:lines];
+            break;
+        case 3: // tableviewcell
+            lines = [self TableViewCellInitCode:objects varString:lines];
+            break;
+        default:
+            break;
+    }
     
-    lines = [self ViewControllerInitCode:objects varString:lines];
+    NSPasteboard *past = [NSPasteboard generalPasteboard];
+    [past clearContents];
+    [past writeObjects:@[lines]];
     
     NSLog(@"%@", lines);
     NSLog(@"%@", @"完成");
@@ -142,10 +171,10 @@ _Pragma("clang diagnostic pop") \
 }
 
 -(NSString*)ViewInitCode:(NSArray<SObject*>*)objects varString:(NSString*)vars {
-    return @"";
+    return @"ViewInitCode";
 }
 -(NSString*)TableViewCellInitCode:(NSArray<SObject*>*)objects varString:(NSString*)vars {
-    return @"";
+    return @"TableViewCellInitCode";
 }
 
 -(NSString*)symbolOverriderText:(id)layer {
@@ -183,7 +212,7 @@ _Pragma("clang diagnostic pop") \
 
 - (SButtonObject*)ButtonCode:(id)layer {
     NSString *classname = [layer className];
-    if ([classname isEqual:@"MSLayerGroup"]) {
+    if ([classname isEqual:@"MSLayerGroup"] || [classname isEqual:@"MSSymbolMaster"]) {
         SButtonObject *model = [[SButtonObject alloc] initWithLayer:layer];
         return model;
     }

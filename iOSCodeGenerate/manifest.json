@@ -1,23 +1,30 @@
 {
 	"name": "iOSCodeGenerate",
-	"description" : "___DESCRIPTION___",
+	"description" : "根据sketch生成代码",
 	"author": "mac",
-	"authorEmail" : "___EMAIL___",
-	"homepage": "___HOMEPAGE___",
-	"identifier" : "PLUGIN_IDENTIFIER",
+	"authorEmail" : "705285647@qq.com",
+	"homepage": "https://github.com/ChendayUP/iOSSketchToSwift",
+	"identifier" : "iOSSketchToSwiftCode",
 	"compatibleVersion": 44,
 	"build": PLUGIN_BUILD,
 	"version": "PLUGIN_VERSION",
   "appcast": "https://api.sketchpacks.com/v1/plugins/PLUGIN_IDENTIFIER/appcast",
 	
 	"commands": [
-		{
-			"name" : "Run",
-			"identifier" : "run",
-			"shortcut" : "",
-			"script" : "script.cocoscript",
-			"handler" : "onRun"
-		},
+        {
+            "name" : "Copy as UIView",
+            "identifier" : "uiview",
+            "shortcut" : "",
+            "script" : "iOSCodeUI.framework/iOSCodeUI.js",
+            "handler" : "onViewCodeGenerate"
+        },
+                 {
+                 "name" : "Copy as UITableViewCell",
+                 "identifier" : "tableviewcell",
+                 "shortcut" : "",
+                 "script" : "iOSCodeUI.framework/iOSCodeUI.js",
+                 "handler" : "onTableViewCellCodeGenerate"
+                 },
 		{
 			"script" : "script.cocoscript",
 			"handlers" : {
@@ -44,7 +51,8 @@
 		"shortcut" : "",
 		"title": "iOSCodeGenerate",
 		"items": [
-			"run"
+            "uiview",
+            "tableviewcell"
 		]
 	}
 }

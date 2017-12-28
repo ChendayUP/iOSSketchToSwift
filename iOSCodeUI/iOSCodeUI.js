@@ -38,8 +38,12 @@ var onStartup = function(context) {
   })();
 };
 
-var VCCodeGenerate = function(content) {
-    
+var onTableViewCellCodeGenerate = function(content) {
+    iOSCodeUI.onTableViewCellCodeGenerated(content);
+}
+
+var onViewCodeGenerate = function(content) {
+    iOSCodeUI.onViewCodeGenerated(content);
 }
 
 var onSelectionChanged = function(context) {
