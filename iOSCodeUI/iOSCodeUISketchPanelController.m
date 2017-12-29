@@ -171,10 +171,93 @@ _Pragma("clang diagnostic pop") \
 }
 
 -(NSString*)ViewInitCode:(NSArray<SObject*>*)objects varString:(NSString*)vars {
-    return @"ViewInitCode";
+    NSString *lines = @"";
+    for (SObject *model in objects) {
+        NSString *code = model.name;
+        if (code.length > 0) {
+            lines = [NSString stringWithFormat:@"%@            %@,\n", lines ,code];
+        }
+    }
+    lines = [lines substringToIndex:lines.length - 2];
+    lines = [NSString stringWithFormat:@"%@\n", lines];
+    
+    NSString *initCode1 =@""
+    @"import UIKit\n"
+    @"class <#UIView#>: UIView {\n"
+    @"\n"
+    @"    convenience init() {\n"
+    @"        self.init(frame: .zero)\n"
+    @"    }\n"
+    @"\n"
+    @"    override init(frame: CGRect) {\n"
+    @"        super.init(frame: frame)\n"
+    @"        SetupUI()\n"
+    @"    }\n"
+    @"    required init?(coder aDecoder: NSCoder) {\n"
+    @"        super.init(coder: aDecoder)\n"
+    @"        SetupUI()\n"
+    @"    }\n"
+    @"\n"
+    @"    func SetupUI() {\n"
+    @"        backgroundColor = UIColor.backgroudGray\n"
+    @"        sv(\n";
+    
+    NSString *initCode2 =@""
+    @"        )\n"
+    @"\n"
+    @"        layout(\n"
+    @"\n"
+    @"        )\n"
+    @"    }\n";
+    
+    NSString *initCode3 =@"}\n";
+    
+    return [NSString stringWithFormat:@"%@%@%@%@%@",initCode1,lines,initCode2,vars,initCode3];
 }
+
 -(NSString*)TableViewCellInitCode:(NSArray<SObject*>*)objects varString:(NSString*)vars {
-    return @"TableViewCellInitCode";
+    NSString *lines = @"";
+    for (SObject *model in objects) {
+        NSString *code = model.name;
+        if (code.length > 0) {
+            lines = [NSString stringWithFormat:@"%@            %@,\n", lines ,code];
+        }
+    }
+    lines = [lines substringToIndex:lines.length - 2];
+    lines = [NSString stringWithFormat:@"%@\n", lines];
+    
+    NSString *initCode1 =@""
+    @"import UIKit\n"
+    @"class <#TableViewCell#>: UITableViewCell, Cell {\n"
+    @"\n"
+    @"    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {\n"
+    @"        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)\n"
+    @"        SetupUI()\n"
+    @"    }\n"
+    @"    required init?(coder aDecoder: NSCoder) {\n"
+    @"        super.init(coder: aDecoder)\n"
+    @"        SetupUI()\n"
+    @"    }\n"
+    @"\n"
+    @"    func configure(row: Row) {\n"
+    @"        guard let model = row.dataModel as? <#ModelType#> else { return }\n"
+    @"\n"
+    @"    }\n"
+    @"    func SetupUI() {\n"
+    @"        selectionStyle = .none\n"
+    @"        sv(\n";
+    
+    NSString *initCode2 =@""
+    @"        )\n"
+    @"\n"
+    @"        layout(\n"
+    @"\n"
+    @"        )\n"
+    @"    }\n";
+    
+    NSString *initCode3 =@"}\n";
+    
+    return [NSString stringWithFormat:@"%@%@%@%@%@",initCode1,lines,initCode2,vars,initCode3];
 }
 
 -(NSString*)symbolOverriderText:(id)layer {

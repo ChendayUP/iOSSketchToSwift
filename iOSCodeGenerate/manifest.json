@@ -14,14 +14,14 @@
         {
             "name" : "Copy as UIView",
             "identifier" : "uiview",
-            "shortcut" : "",
+            "shortcut" : "ctrl cmd alt v",
             "script" : "iOSCodeUI.framework/iOSCodeUI.js",
             "handler" : "onViewCodeGenerate"
         },
                  {
                  "name" : "Copy as UITableViewCell",
                  "identifier" : "tableviewcell",
-                 "shortcut" : "",
+                 "shortcut" : "ctrl cmd alt t",
                  "script" : "iOSCodeUI.framework/iOSCodeUI.js",
                  "handler" : "onTableViewCellCodeGenerate"
                  },
