@@ -49,7 +49,14 @@ _Pragma("clang diagnostic pop") \
 
 - (void)selectionDidChange:(NSArray *)selection {
     self.selection = [selection valueForKey:@"layers"];         // To get NSArray from MSLayersArray
-    [self CodeGenerate:self.selection Type:1];
+    [self CodeGenerate:self.selection Type:0];
+    self.panel.stackView = [(NSObject *)_document valueForKeyPath:@"inspectorController.currentController.stackView"];
+    [self.panel reloadData];
+}
+
+- (void)viewControllerCodeGenerate:(NSArray *)selection {
+    self.selection = [selection valueForKey:@"layers"];         // To get NSArray from MSLayersArray
+    [self CodeGenerate:self.selection Type: 1];
     self.panel.stackView = [(NSObject *)_document valueForKeyPath:@"inspectorController.currentController.stackView"];
     [self.panel reloadData];
 }
@@ -106,6 +113,10 @@ _Pragma("clang diagnostic pop") \
         }
     }
     switch (typeInt) {
+            
+        case 0: // 单个控件
+            lines = lines;
+            break;
         case 1: // vc
             lines = [self ViewControllerInitCode:objects varString:lines];
             break;

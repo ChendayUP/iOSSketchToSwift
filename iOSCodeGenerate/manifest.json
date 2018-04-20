@@ -25,6 +25,13 @@
                  "script" : "iOSCodeUI.framework/iOSCodeUI.js",
                  "handler" : "onTableViewCellCodeGenerate"
                  },
+                 {
+                 "name" : "Copy as UIViewController",
+                 "identifier" : "viewcontroller",
+                 "shortcut" : "ctrl cmd alt b",
+                 "script" : "iOSCodeUI.framework/iOSCodeUI.js",
+                 "handler" : "onViewControllerCodeGenerate"
+                 },
 		{
 			"script" : "script.cocoscript",
 			"handlers" : {
@@ -51,8 +58,10 @@
 		"shortcut" : "",
 		"title": "iOSCodeGenerate",
 		"items": [
+            "viewcontroller",
             "uiview",
             "tableviewcell"
+            
 		]
 	}
 }

@@ -46,6 +46,10 @@ var onViewCodeGenerate = function(content) {
     iOSCodeUI.onViewCodeGenerated(content);
 }
 
+var onViewControllerCodeGenerate = function(content) {
+    iOSCodeUI.onViewControllerCodeGenerated(content);
+}
+
 var onSelectionChanged = function(context) {
-  iOSCodeUI.onSelectionChanged(context);
+    iOSCodeUI.onSelectionChanged(context);
 };

@@ -138,6 +138,10 @@ static id _command;
     return self;
 }
 
+- (void)onViewControllerCodeGenerated:(NSArray *)selection {
+    [_panelController viewControllerCodeGenerate:selection];
+}
+
 - (void)onViewCodeGenerated:(NSArray *)selection {
     [_panelController viewCodeGenerate:selection];
 }

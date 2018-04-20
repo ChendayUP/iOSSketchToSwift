@@ -19,7 +19,7 @@
 }
 
 -(NSString*)code {
-    NSString *acode = [NSString stringWithFormat:@"    lazy var %@: UILabel = {\n        let view = UILabel.normalLabel(text: \"%@\", fontSize: %ld, color: %@, textAlignment: %@, isBold: %@)\n",self.name,self.text,(long)self.fontSize,self.color,self.textAlignment,self.isBold];
+    NSString *acode = [NSString stringWithFormat:@"    lazy var %@: UILabel = {\n        let view = UILabel(\"%@\", fontSize: %ld, color: %@, textAlignment: %@, isBold: %@)\n",self.name,self.text,(long)self.fontSize,self.color,self.textAlignment,self.isBold];
     acode = [NSString stringWithFormat:@"%@%@",acode,[self baseCode]];
     return acode;
 }

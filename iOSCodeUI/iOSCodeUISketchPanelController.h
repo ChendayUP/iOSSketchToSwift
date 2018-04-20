@@ -21,6 +21,7 @@
 
 - (instancetype)initWithDocument:(id <iOSCodeUIMSDocument>)document;
 - (void)selectionDidChange:(NSArray *)selection;
+- (void)viewControllerCodeGenerate:(NSArray *)selection ;
 - (void)viewCodeGenerate:(NSArray *)selection ;
 - (void)tableViewCellCodeGenerate:(NSArray *)selection ;
 
