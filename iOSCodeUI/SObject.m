@@ -204,7 +204,8 @@
 - (NSDictionary*)colorDic {
     if (!_colorDic) {
         _colorDic = @{@"0x666666" : @"UIColor.wordLightBlack",
-                      @"0x333333": @"UIColor.wordBlack"
+                      @"0x000000": @"UIColor.wordBlack",
+                      @"0xFFFFFF": @"UIColor.white"
                       };
     }
     return _colorDic;
